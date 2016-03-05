@@ -8,6 +8,7 @@ import org.lwjgl.vulkan.VkInstanceCreateInfo;
 
 import java.nio.ByteBuffer;
 
+import static org.lwjgl.glfw.GLFWVulkan.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.KHRSurface.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -20,20 +21,23 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class InstanceExample extends VulkanExample
 {
+    private VkInstance instance;
+
     public static void main(String[] args)
     {
         title = "Vulkan Instance Example";
         new InstanceExample().start();
     }
 
-    private VkInstance instance;
-
     @Override
     public VkInstance initVulkan()
     {
-        // We need to say which extensions to enable at the time of creating the instance.
+        // We need to say which extensions to enable at the time of creating the instance. We should also add in the
+        // extensions required by GLFW to create the surface. Note that this should not be freed manually.
+        PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
+
         // Create a PointerBuffer with memory enough to hold pointers for all the extension names.
-        PointerBuffer enabledExtensionNames = memAllocPointer(1);
+        PointerBuffer enabledExtensionNames = memAllocPointer(glfwExtensions.remaining() + 1);
 
         // Encode the surface extension names into a ByteBuffer so we can put it in the PointerBuffer.
         // Also note that it is a must to use MALLOC as BufferAllocator and NIO will not work.
@@ -42,6 +46,12 @@ public class InstanceExample extends VulkanExample
         // Add the extensions to the PointerBuffer and flip the buffer. In order to present something
         // we must request the KHR_SURFACE_EXTENSION, without which, the instance will act like an offscreen context.
         enabledExtensionNames.put(KHR_SURFACE_EXTENSION);
+
+        // Also put in the GLFW extensions into the enabledExtensionNames list so they get enabled too.
+        while (glfwExtensions.remaining() > 0)
+            enabledExtensionNames.put(glfwExtensions.get());
+
+        // Flip the buffer so that the system can read from the buffer.
         enabledExtensionNames.flip();
 
         // The VkApplicationInfo struct contains information about the application that we are going to create.
