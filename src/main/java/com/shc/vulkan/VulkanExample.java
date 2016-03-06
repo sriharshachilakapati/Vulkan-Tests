@@ -45,6 +45,25 @@ public abstract class VulkanExample
     }
 
     /**
+     * This is a utility method that does the opposite of the VK_MAKE_VERSION method, that it extracts the version from
+     * the packed integer and returns it as major minor patch values in an int array.
+     *
+     * @param version The packed version integer that contains vulkan version.
+     *
+     * @return An array containing major, minor and patch versions in the order.
+     */
+    public static int[] VK_EXTRACT_VERSION(int version)
+    {
+        int[] versions = new int[3];
+
+        versions[0] = version >> 22;
+        versions[1] = version >> 12 & 0xF;
+        versions[2] = version & 0xF;
+
+        return versions;
+    }
+
+    /**
      * The job of this method is to initialize Vulkan and return the VkInstance struct handle so that it is used to
      * create a surface and attaches with the window. The initialization code should request the KHR_SURFACE extension
      * to be able to create the surface.

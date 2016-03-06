@@ -59,7 +59,7 @@ public class InstanceExample extends VulkanExample
                 .sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
                 .pApplicationName("Vulkan Instance Example")
                 .pEngineName("")
-                .apiVersion(VK_MAKE_VERSION(1, 0, 3));
+                .apiVersion(VK_MAKE_VERSION(1, 0, 4));
 
         // The VkInstanceCreateInfo struct contains information about the Vulkan instance, and refers to the appInfo.
         VkInstanceCreateInfo instInfo = VkInstanceCreateInfo.calloc()
