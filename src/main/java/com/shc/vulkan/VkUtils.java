@@ -1,0 +1,108 @@
+package com.shc.vulkan;
+
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.vulkan.VkApplicationInfo;
+import org.lwjgl.vulkan.VkInstance;
+import org.lwjgl.vulkan.VkInstanceCreateInfo;
+
+import java.nio.ByteBuffer;
+
+import static com.shc.vulkan.VulkanExample.*;
+import static org.lwjgl.glfw.GLFWVulkan.*;
+import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.vulkan.VK10.*;
+
+/**
+ * @author Sri Harsha Chilakapati
+ */
+public final class VkUtils
+{
+    private VkUtils()
+    {
+    }
+
+    /**
+     * Utility method to create a Vulkan instance. It is used by all the examples except the InstanceExample to reduce
+     * the duplication of code. For explanation and comments, please see the InstanceExample class.
+     *
+     * @param applicationName The Application name to be used when creating the instance.
+     * @param extensions      The list of extensions to enable for this instance.
+     *
+     * @return The creating VkInstance used to deal with the Vulkan API.
+     */
+    public static VkInstance createInstance(String applicationName, String... extensions)
+    {
+        VkInstance instance;
+
+        PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
+
+        PointerBuffer enabledExtensionNames = memAllocPointer(extensions.length + glfwExtensions.remaining());
+        ByteBuffer[] extensionNames = new ByteBuffer[extensions.length];
+
+        for (int i = 0; i < extensions.length; i++)
+        {
+            String extensionName = extensions[i];
+            extensionNames[i] = memEncodeASCII(extensionName, BufferAllocator.MALLOC);
+
+            enabledExtensionNames.put(extensionNames[i]);
+        }
+
+        while (glfwExtensions.remaining() > 0)
+            enabledExtensionNames.put(glfwExtensions.get());
+
+        enabledExtensionNames.flip();
+
+        VkApplicationInfo appInfo = VkApplicationInfo.calloc()
+                .sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
+                .pApplicationName(applicationName)
+                .pEngineName("")
+                .apiVersion(VK_MAKE_VERSION(1, 0, 4));
+
+        VkInstanceCreateInfo instInfo = VkInstanceCreateInfo.calloc()
+                .sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
+                .pNext(NULL)
+                .pApplicationInfo(appInfo)
+                .ppEnabledExtensionNames(enabledExtensionNames);
+
+        PointerBuffer pInstance = memAllocPointer(1);
+
+        vkCreateInstance(instInfo, null, pInstance);
+
+        instance = new VkInstance(pInstance.get(), instInfo);
+
+        memFree(pInstance);
+
+        appInfo.free();
+        instInfo.free();
+
+        memFree(enabledExtensionNames);
+
+        for (ByteBuffer byteBuffer : extensionNames)
+            memFree(byteBuffer);
+
+        return instance;
+    }
+
+    public static String translatePhysicalDeviceType(int deviceType)
+    {
+        switch (deviceType)
+        {
+            case VK_PHYSICAL_DEVICE_TYPE_CPU:
+                return "CPU";
+
+            case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+                return "Discrete GPU";
+
+            case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+                return "Integrated GPU";
+
+            case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+                return "Virtual GPU";
+
+            case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+                return "Other";
+        }
+
+        return null;
+    }
+}

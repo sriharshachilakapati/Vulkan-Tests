@@ -1,29 +1,26 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+project.ext.jomlVersion  = "1.7.2-SNAPSHOT"
+project.ext.lwjglVersion = "3.0.0-SNAPSHOT"
+
 repositories {
-    mavenCentral()
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots/"
     }
-}
-project.ext.jomlVersion = "1.7.1-SNAPSHOT"
-dependencies {
-    compile "org.joml:joml:${jomlVersion}"
-}
-
-// Source sets in the project, specify source directories
-sourceSets {
-    main {
-        java.srcDir("${projectDir}/src/main/java/")
-        resources.srcDir("${projectDir}/src/main/java/")
-    }
+    mavenCentral()
 }
 
 // Dependencies for the project are stored in the libs directory
 dependencies {
-    compile fileTree(dir: "libs", includes: ["*.jar"])
-    runtime fileTree(dir: "libs", includes: ["*.jar"])
+    // We use JOML for math work
+    compile "org.joml:joml:${jomlVersion}"
+
+    // We use LWJGL 3 to provide GL bindings
+    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
 
     // Using this because the resources are in source code
     runtime fileTree(dir: "${projectDir}/src/main/java/", includes: ["*"])
