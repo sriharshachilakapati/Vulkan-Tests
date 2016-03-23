@@ -4,8 +4,10 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkApplicationInfo;
 import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
+import org.lwjgl.vulkan.VkPhysicalDevice;
 
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import static com.shc.vulkan.VulkanExample.*;
 import static org.lwjgl.glfw.GLFWVulkan.*;
@@ -104,5 +106,28 @@ public final class VkUtils
         }
 
         return null;
+    }
+
+    /**
+     * Returns the handle to the first physical device connected to the system.
+     *
+     * @param instance The instance of the vulkan
+     *
+     * @return The handle to the first physical device.
+     */
+    public static VkPhysicalDevice getFirstPhysicalDevice(VkInstance instance)
+    {
+        IntBuffer gpuCount = memAllocInt(1);
+
+        vkEnumeratePhysicalDevices(instance, gpuCount, null);
+        PointerBuffer devices = memAllocPointer(gpuCount.get(0));
+        vkEnumeratePhysicalDevices(instance, gpuCount, devices);
+
+        VkPhysicalDevice firstPhysicalDevice = new VkPhysicalDevice(devices.get(0), instance);
+
+        memFree(gpuCount);
+        memFree(devices);
+
+        return firstPhysicalDevice;
     }
 }
