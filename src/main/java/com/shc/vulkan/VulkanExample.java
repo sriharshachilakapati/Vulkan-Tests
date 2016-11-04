@@ -93,7 +93,7 @@ public abstract class VulkanExample
         glfwInit();
 
         // Check if Vulkan is available, if not, exit early.
-        if (glfwVulkanSupported() == GLFW_FALSE)
+        if (!glfwVulkanSupported())
             throw new UnsupportedOperationException("Vulkan driver is not found on this machine. Please update your drivers.");
 
         // Create a GLFW window with no API
@@ -118,7 +118,7 @@ public abstract class VulkanExample
 
         memFree(pSurface);
 
-        while (glfwWindowShouldClose(windowID) == GLFW_FALSE)
+        while (!glfwWindowShouldClose(windowID))
         {
             glfwPollEvents();
             render();

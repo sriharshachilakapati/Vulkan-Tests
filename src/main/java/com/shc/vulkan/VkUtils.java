@@ -9,7 +9,6 @@ import org.lwjgl.vulkan.VkPhysicalDevice;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static com.shc.vulkan.VulkanExample.*;
 import static org.lwjgl.glfw.GLFWVulkan.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -44,7 +43,7 @@ public final class VkUtils
         for (int i = 0; i < extensions.length; i++)
         {
             String extensionName = extensions[i];
-            extensionNames[i] = memEncodeASCII(extensionName, BufferAllocator.MALLOC);
+            extensionNames[i] = memASCII(extensionName);
 
             enabledExtensionNames.put(extensionNames[i]);
         }
@@ -56,8 +55,8 @@ public final class VkUtils
 
         VkApplicationInfo appInfo = VkApplicationInfo.calloc()
                 .sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
-                .pApplicationName(applicationName)
-                .pEngineName("")
+                .pApplicationName(memASCII(applicationName))
+                .pEngineName(memASCII(""))
                 .apiVersion(VK_MAKE_VERSION(1, 0, 4));
 
         VkInstanceCreateInfo instInfo = VkInstanceCreateInfo.calloc()

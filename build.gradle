@@ -1,27 +1,35 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-project.ext.jomlVersion  = "1.7.2-SNAPSHOT"
-project.ext.lwjglVersion = "3.0.0-SNAPSHOT"
-
 repositories {
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
     mavenCentral()
 }
 
 // Dependencies for the project are stored in the libs directory
 dependencies {
     // We use JOML for math work
-    compile "org.joml:joml:${jomlVersion}"
+    compile "org.joml:joml:1.9.0"
 
-    // We use LWJGL 3 to provide GL bindings
-    compile "org.lwjgl:lwjgl:${lwjglVersion}"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
+    // LWJGL modules
+    compile "org.lwjgl:lwjgl:3.1.0"
+    compile "org.lwjgl:lwjgl-glfw:3.1.0"
+    compile "org.lwjgl:lwjgl-jemalloc:3.1.0"
+    compile "org.lwjgl:lwjgl-stb:3.1.0"
+    compile "org.lwjgl:lwjgl-vulkan:3.1.0"
 
-    // Using this because the resources are in source code
-    runtime fileTree(dir: "${projectDir}/src/main/java/", includes: ["*"])
+    // LWJGL natives
+    compile "org.lwjgl:lwjgl:3.1.0:natives-windows"
+    compile "org.lwjgl:lwjgl-glfw:3.1.0:natives-windows"
+    compile "org.lwjgl:lwjgl-jemalloc:3.1.0:natives-windows"
+    compile "org.lwjgl:lwjgl-stb:3.1.0:natives-windows"
+
+    compile "org.lwjgl:lwjgl:3.1.0:natives-linux"
+    compile "org.lwjgl:lwjgl-glfw:3.1.0:natives-linux"
+    compile "org.lwjgl:lwjgl-jemalloc:3.1.0:natives-linux"
+    compile "org.lwjgl:lwjgl-stb:3.1.0:natives-linux"
+
+    compile "org.lwjgl:lwjgl:3.1.0:natives-macos"
+    compile "org.lwjgl:lwjgl-glfw:3.1.0:natives-macos"
+    compile "org.lwjgl:lwjgl-jemalloc:3.1.0:natives-macos"
+    compile "org.lwjgl:lwjgl-stb:3.1.0:natives-macos"
 }

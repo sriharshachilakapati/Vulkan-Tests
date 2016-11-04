@@ -40,8 +40,7 @@ public class InstanceExample extends VulkanExample
         PointerBuffer enabledExtensionNames = memAllocPointer(glfwExtensions.remaining() + 1);
 
         // Encode the surface extension names into a ByteBuffer so we can put it in the PointerBuffer.
-        // Also note that it is a must to use MALLOC as BufferAllocator and NIO will not work.
-        ByteBuffer KHR_SURFACE_EXTENSION = memEncodeASCII(VK_KHR_SURFACE_EXTENSION_NAME, BufferAllocator.MALLOC);
+        ByteBuffer KHR_SURFACE_EXTENSION = memASCII(VK_KHR_SURFACE_EXTENSION_NAME);
 
         // Add the extensions to the PointerBuffer and flip the buffer. In order to present something
         // we must request the KHR_SURFACE_EXTENSION, without which, the instance will act like an offscreen context.
@@ -57,8 +56,8 @@ public class InstanceExample extends VulkanExample
         // The VkApplicationInfo struct contains information about the application that we are going to create.
         VkApplicationInfo appInfo = VkApplicationInfo.calloc()
                 .sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
-                .pApplicationName("Vulkan Instance Example")
-                .pEngineName("")
+                .pApplicationName(memASCII("Vulkan Instance Example"))
+                .pEngineName(memASCII(""))
                 .apiVersion(VK_MAKE_VERSION(1, 0, 4));
 
         // The VkInstanceCreateInfo struct contains information about the Vulkan instance, and refers to the appInfo.
